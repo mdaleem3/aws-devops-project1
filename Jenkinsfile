@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -5,27 +6,42 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'master',
-                url: 'https://github.com/mdaleem3/aws-devops-project1'
+                checkout scm
+            }
+        }
+
+        stage('Docker Check') {
+            steps {
+                bat 'docker version'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t aleem-web:1.0 .'
+                bat 'docker build -t aleem-web:%BUILD_NUMBER% .'
             }
         }
 
-        stage('Run Container') {
+        stage('Stop Old Container') {
             steps {
-                bat 'docker rm -f aleem-web || exit 0'
-                bat 'docker run -d --name aleem-web -p 8085:80 aleem-web:1.0'
+                script {
+                    bat(
+                        returnStatus: true,
+                        script: 'docker rm -f aleem-web'
+                    )
+                }
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                bat 'docker run -d --name aleem-web -p 8085:80 aleem-web:%BUILD_NUMBER%'
             }
         }
 
         stage('Verify Application') {
             steps {
-                bat 'curl.exe -I http://localhost:8085'
+                bat 'curl.exe -f http://localhost:8085'
             }
         }
     }
