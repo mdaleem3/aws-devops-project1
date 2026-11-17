@@ -4,44 +4,27 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
+        stage('Check Windows User') {
             steps {
-                checkout scm
+                bat 'whoami'
             }
         }
 
-        stage('Docker Check') {
+        stage('Check Docker Path') {
             steps {
-                bat 'docker version'
+                bat 'where.exe docker'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Check Docker Version') {
             steps {
-                bat 'docker build -t aleem-web:%BUILD_NUMBER% .'
+                bat '"C:\\Users\\Haseed\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" version'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Check Docker Engine') {
             steps {
-                script {
-                    bat(
-                        returnStatus: true,
-                        script: 'docker rm -f aleem-web'
-                    )
-                }
-            }
-        }
-
-        stage('Deploy Container') {
-            steps {
-                bat 'docker run -d --name aleem-web -p 8085:80 aleem-web:%BUILD_NUMBER%'
-            }
-        }
-
-        stage('Verify Application') {
-            steps {
-                bat 'curl.exe -f http://localhost:8085'
+                bat '"C:\\Users\\Haseed\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" -H npipe:////./pipe/dockerDesktopLinuxEngine ps'
             }
         }
     }
