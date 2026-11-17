@@ -48,5 +48,15 @@ pipeline {
             }
         }
 
+stage('Run Docker Container') {
+    steps {
+        bat '''
+            docker rm -f aleem-container 2>NUL
+            docker run -d --name aleem-container -p 8085:80 aleem-cicd:v1
+            docker ps
+        '''
+    }
+}
+
     }
 }
