@@ -35,6 +35,22 @@ pipeline {
                 bat '''
                     docker images
                 '''
+                stage('Check Workspace Files') {
+    steps {
+        bat '''
+            echo Checking workspace files
+            dir
+
+            echo Checking Dockerfile
+            if exist Dockerfile (
+                echo Dockerfile found successfully
+            ) else (
+                echo Dockerfile NOT found
+                exit /b 1
+            )
+        '''
+    }
+}
             }
         }
 
