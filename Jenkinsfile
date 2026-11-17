@@ -49,6 +49,13 @@ pipeline {
                 exit /b 1
             )
         '''
+        
+stage('Build Docker Image') {
+    steps {
+        bat 'docker build -t aleem-cicd:v1 .'
+    }
+}
+
     }
 }
             }
